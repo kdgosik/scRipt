@@ -4,7 +4,7 @@
 #'
 #' Runs and visulizes the 10X clustering from the Cell Ranger website
 #'
-#' @param id shiny id
+#' @param id The namespace for the shiny application.
 #' @return shinyUI for module
 #' @export
 #' @import shiny
@@ -94,7 +94,7 @@ ui <- shinyUI(
         tabsetPanel(
 
           tabPanel(title = "Introduction",
-                   includeMarkdown("www/AppIntroduction.md")
+                   includeMarkdown("inst/www/AppIntroduction.md")
           ), # tabPanel
 
           # Show the t-SNE plot
