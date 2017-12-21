@@ -7,10 +7,10 @@
 #' @param id The namespace for the module
 #' @keywords shiny
 #' @import ggplot2
-#' @improt plotly
+#' @import plotly
 #' @import Seurat
 #' @import dplyr
-#' @import shinycssloaders
+#' @importFrom shinycssloaders withSpinner
 #' @importFrom shiny div
 #' @importFrom shiny NS
 #' @importFrom shiny selectInput

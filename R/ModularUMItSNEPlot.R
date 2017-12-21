@@ -7,27 +7,28 @@
 #' @param id The namespace for the module
 #' @keywords shiny
 #' @import ggplot2
-#' @improt plotly
+#' @import plotly
 #' @import cellranger
 #' @importFrom shiny div
 #' @importFrom shiny NS
+#' @importFrom shiny tagList
 #' @importFrom shiny sliderInput
-#' @inportFrom shiny selectizeInput
+#' @importFrom shiny selectizeInput
 #' @importFrom shiny verbatimTextOutput
 #' @author Kirk Gosik <kgosik@broadinstitute.org>
 
-# if cellranger R kit is not installed then install it
-if( !{"cellrangerRkit" %in% installed.packages()} ) {
-  source("http://cf.10xgenomics.com/supp/cell-exp/rkit-install-2.0.0.R")
-}
-require(cellrangerRkit)
+# # if cellranger R kit is not installed then install it
+# if( !{"cellrangerRkit" %in% installed.packages()} ) {
+#   source("http://cf.10xgenomics.com/supp/cell-exp/rkit-install-2.0.0.R")
+# }
+# require(cellrangerRkit)
 
 # MODULE UI
 UMItSNEPlotUI <- function(id) {
   ns <- NS(id)
 
   ## Ui Outputs Here from server below
-  tagList(
+  shiny::tagList(
 
     div(
       shiny::sliderInput(inputId = ns("plot_limits"),

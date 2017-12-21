@@ -11,20 +11,20 @@
 #' @param id The namespace for the module
 #' @keywords shiny
 #' @import cellranger
-#' @improt cellrangerRkit
-#' @import shinycssloaders
+#' @importFrom shinycssloaders withSpinner
 #' @importFrom shiny div
+#' @importFrom shiny tagList
 #' @importFrom shiny NS
 #' @importFrom shiny sliderInput
 #' @importFrom shiny plotOutput
-#' @improtFrom shiny numeriInput
+#' @importFrom shiny numericInput
 #' @author Kirk Gosik <kgosik@broadinstitute.org>
 
-# if cellranger R kit is not installed then install it
-if( !{"cellrangerRkit" %in% installed.packages()} ) {
-  source("http://cf.10xgenomics.com/supp/cell-exp/rkit-install-2.0.0.R")
-}
-require(cellrangerRkit)
+# # if cellranger R kit is not installed then install it
+# if( !{"cellrangerRkit" %in% installed.packages()} ) {
+#   source("http://cf.10xgenomics.com/supp/cell-exp/rkit-install-2.0.0.R")
+# }
+# require(cellrangerRkit)
 
 
 # MODULE UI
@@ -37,9 +37,9 @@ ClusterExplore10xUI <- function(id) {
     div(
       ## numeric input for the number of clusters to include
       shiny::sliderInput(inputId = ns("num_clusters"),
-                       label = "Number of Clusters",
-                       min = 2, max = 10,
-                       value = 5, step = 1)
+                         label = "Number of Clusters",
+                         min = 2, max = 10,
+                         value = 5, step = 1)
       ), # div
 
     div(
@@ -50,10 +50,10 @@ ClusterExplore10xUI <- function(id) {
     div(
       ## numeric input for the number of genes to include
       shiny::numericInput(inputId = ns("n_genes"),
-                         label = "Number of Genes",
-                         value = 3,
-                         min = 1, max = 20,
-                         step = 1)
+                          label = "Number of Genes",
+                          value = 3,
+                          min = 1, max = 20,
+                          step = 1)
       ), # div
 
     div(

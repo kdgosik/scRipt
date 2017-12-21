@@ -32,16 +32,16 @@ ui <- shinyUI(
       sidebarPanel(
 
         shiny::radioButtons(inputId = "task",
-                     label = "Select Task",
-                     choices = c("Create Output", "Select Data")),
+                            label = "Select Task",
+                            choices = c("Create Output", "Select Data")),
 
         conditionalPanel(
 
           condition = "input.task == 'Create Output'",
 
           shinyFiles::shinyDirButton(id = "file_path",
-                         label = "10X Path",
-                         title = "Button"),
+                                     label = "10X Path",
+                                     title = "Button"),
 
           shiny::p("eg  ../filtered_gene_bc_matrices/hg19"),
 
@@ -52,23 +52,23 @@ ui <- shinyUI(
           shiny::textInput("cell_type", "Cell Type (if known)"),
 
           shiny::sliderInput(inputId = "cells",
-                      label = "Minimum Cells Per Gene",
-                      value = 3,
-                      min = 1,
-                      max = 20),
+                             label = "Minimum Cells Per Gene",
+                             value = 3,
+                             min = 1,
+                             max = 20),
 
           shiny::sliderInput(inputId = "genes",
-                      label = "Minimum Genes Per Cell",
-                      value = 200,
-                      min = 10,
-                      max =  500),
+                             label = "Minimum Genes Per Cell",
+                             value = 200,
+                             min = 10,
+                             max =  500),
 
           shiny::sliderInput(inputId = "max_mt",
-                      label = "Max Percent Mitochondrial Genes Present",
-                      value = 0.05,
-                      min = 0,
-                      max = 0.5,
-                      step = 0.01),
+                             label = "Max Percent Mitochondrial Genes Present",
+                             value = 0.05,
+                             min = 0,
+                             max = 0.5,
+                             step = 0.01),
 
           shiny::actionButton("create_output", "Create Output")
 
@@ -78,9 +78,12 @@ ui <- shinyUI(
 
           condition = "input.task == 'Select Data'",
 
-          selectInput("data_source", "Select Data Source", choices = gsub(".rds","",dir("../data", pattern = ".rds"))),
-          actionButton("read_data", "Read Data"),
-          uiOutput("ui_data_load")
+          #shiny::selectInput("data_source", "Select Data Source", choices = gsub(".rds","",dir("output", pattern = ".rds"))),
+          shiny::fileInput(inputId = "data_source",
+                           label = "Select Data",
+                           accept = ".rds"),
+          shiny::actionButton("read_data", "Read Data"),
+          shiny::uiOutput("ui_data_load")
 
 
         ) # conditionalPanel
@@ -163,12 +166,12 @@ server <- function(input, output, session) {
   reactive({
 
     updateSelectInput(session, "data_source", "Select Data Source",
-                      choices = gsub(".rds","",dir("data", pattern = ".rds")))
+                      choices = gsub(".rds", "", dir("data", pattern = ".rds")))
 
   })
 
   # defines root directory for the user
-  shinyDirChoose(input, 'file_path', roots = c(root = '/'))
+  shinyFiles::shinyDirChoose(input, 'file_path', roots = c(root = '/'))
 
   # creates seurat tutorial markdown to html file
   observeEvent(input$create_output, {
@@ -187,13 +190,13 @@ server <- function(input, output, session) {
                                celltype_inpt,
                                format(Sys.Date())), collapse = "-")
 
-      rmarkdown::render(input = "../R/Seurat_to_Markdown.Rmd",
+      rmarkdown::render(input = "R/Seurat_to_Markdown.Rmd",
                         params = list(project = project_name,
                                       path = path,
                                       cells = input$cells,
                                       genes = input$genes,
                                       max_mt = input$max_mt),
-                        output_file = paste0("../output/", project_name, ".html"))
+                        output_file = paste0("output/", project_name, ".html"))
 
     })
 
@@ -204,7 +207,7 @@ server <- function(input, output, session) {
 
     withProgress(message = "Loading Data...", {
 
-      readRDS(file = dir("../data", pattern = input$data_source, full.names = TRUE))
+      readRDS(file = dir("data", pattern = input$data_source, full.names = TRUE))
 
     })
 
