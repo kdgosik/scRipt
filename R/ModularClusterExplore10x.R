@@ -44,7 +44,7 @@ ClusterExplore10xUI <- function(id) {
 
     div(
       ## css spinner on top of ploting the scatter plot of the clusters
-      withSpinner(shiny::plotOutput(outputId = ns("cluster_plot")))
+      shinycssloaders::withSpinner(shiny::plotOutput(outputId = ns("cluster_plot")))
       ), # div
 
     div(

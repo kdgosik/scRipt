@@ -33,7 +33,7 @@ IdentifytSNEUI <- function(id) {
                          choices = c("tsne", "pca")),
 
       ## css spinner loader on top of plotly output
-      withSpinner(plotly::plotlyOutput(outputId = ns("plot1")))
+      shinycssloaders::withSpinner(plotly::plotlyOutput(outputId = ns("plot1")))
         ), # div
 
     div(

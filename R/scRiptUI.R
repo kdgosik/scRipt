@@ -17,5 +17,6 @@
 
 
 scRiptUI <- function() {
-  shiny::runApp(system.file("shiny", package="scRipt"))
+  ##shiny::runApp(ui = ui, server = server)
+  shiny::shinyApp(ui = ui, server = server)
 }

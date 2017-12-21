@@ -7,7 +7,9 @@
 #' @param id shiny id
 #' @return shinyUI for module
 #' @export
-#' @import shiny shinyFiles cellranger
+#' @import shiny
+#' @import shinyFiles
+#' @import cellranger
 #' @author Kirk Gosik <kgosik@broadinstitute.org>
 #' @examples
 
