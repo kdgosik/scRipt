@@ -20,11 +20,11 @@
 #' @importFrom shiny numericInput
 #' @author Kirk Gosik <kgosik@broadinstitute.org>
 
-# # if cellranger R kit is not installed then install it
-# if( !{"cellrangerRkit" %in% installed.packages()} ) {
-#   source("http://cf.10xgenomics.com/supp/cell-exp/rkit-install-2.0.0.R")
-# }
-# require(cellrangerRkit)
+# if cellranger R kit is not installed then install it
+if( !{"cellrangerRkit" %in% installed.packages()} ) {
+  source("http://cf.10xgenomics.com/supp/cell-exp/rkit-install-2.0.0.R")
+}
+require(cellrangerRkit)
 
 
 # MODULE UI

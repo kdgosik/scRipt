@@ -79,7 +79,7 @@ IdentifytSNEServer <- function(input, output, session, obj) {
   # printing out the number of non-zero results
   output$transform <- renderPrint({
     ## event data from the plotly selection.  still needs work bc it prints NAs
-    d <- event_data("plotly_selected")
+    d <- plotly::event_data("plotly_selected")
 
     if (is.null(d)) {
 

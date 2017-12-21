@@ -17,11 +17,11 @@
 #' @importFrom shiny verbatimTextOutput
 #' @author Kirk Gosik <kgosik@broadinstitute.org>
 
-# # if cellranger R kit is not installed then install it
-# if( !{"cellrangerRkit" %in% installed.packages()} ) {
-#   source("http://cf.10xgenomics.com/supp/cell-exp/rkit-install-2.0.0.R")
-# }
-# require(cellrangerRkit)
+# if cellranger R kit is not installed then install it
+if( !{"cellrangerRkit" %in% installed.packages()} ) {
+  source("http://cf.10xgenomics.com/supp/cell-exp/rkit-install-2.0.0.R")
+}
+require(cellrangerRkit)
 
 # MODULE UI
 UMItSNEPlotUI <- function(id) {
@@ -87,16 +87,16 @@ UMItSNEPlotServer <- function(input, output, session, outs) {
     if( is.null(input$gene_symbol) ){
 
       cellrangerRkit::visualize_umi_counts(gbm = outs()[["gbm"]],
-                           projection = outs()[["tsne_proj"]][c("TSNE.1", "TSNE.2")],
-                           limits = input$plot_limits)
+                                           projection = outs()[["tsne_proj"]][c("TSNE.1", "TSNE.2")],
+                                           limits = input$plot_limits)
 
     }else{
 
       # display plot by genes provided
       cellrangerRkit::visualize_gene_markers(gbm = outs()[["gbm_log"]],
-                             gene_probes = input$gene_symbol,
-                             projection = outs()[["tsne_proj"]][c("TSNE.1", "TSNE.2")],
-                             limits = input$plot_limits)
+                                             gene_probes = input$gene_symbol,
+                                             projection = outs()[["tsne_proj"]][c("TSNE.1", "TSNE.2")],
+                                             limits = input$plot_limits)
 
     }
 

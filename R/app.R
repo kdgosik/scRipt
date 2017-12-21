@@ -78,10 +78,14 @@ ui <- shinyUI(
 
           condition = "input.task == 'Select Data'",
 
-          #shiny::selectInput("data_source", "Select Data Source", choices = gsub(".rds","",dir("output", pattern = ".rds"))),
-          shiny::fileInput(inputId = "data_source",
-                           label = "Select Data",
-                           accept = ".rds"),
+          shinyFiles::shinyDirButton(id = "data_source",
+                                     label = "Created Output Path",
+                                     title = "Button"),
+
+          shiny::selectInput(inputId = "rds_file",
+                             label = "Select RDS file",
+                             choices = ""),
+
           shiny::actionButton("read_data", "Read Data"),
           shiny::uiOutput("ui_data_load")
 
@@ -143,6 +147,9 @@ ui <- shinyUI(
 #' @param id shiny id
 #' @return shinyUI for module
 #' @export
+#' @param input List-like object that stores the current values of all of the widgets in your app.
+#' @param output List-like object that stores instructions for building the R objects in your app.
+#' @param session List-like object about the session to be passed to the UI.
 #' @import shiny
 #' @import shinyFiles
 #' @import cellranger
@@ -160,18 +167,16 @@ require(cellrangerRkit)
 # source("../R/ModularClusterExplore10x.R") ## will move to main part of the package
 # source("../R/ModularIdentifytSNE.R")  ## will move to main part of the package
 
+options(shiny.maxRequestSize = 500*1024^2)
+
 
 server <- function(input, output, session) {
-  ## supposed to dynamically update data sources but doesn't seem to
-  reactive({
-
-    updateSelectInput(session, "data_source", "Select Data Source",
-                      choices = gsub(".rds", "", dir("data", pattern = ".rds")))
-
-  })
 
   # defines root directory for the user
   shinyFiles::shinyDirChoose(input, 'file_path', roots = c(root = '/'))
+
+  # defines root directory for the user
+  shinyFiles::shinyDirChoose(input, 'data_source', roots = c(root = '/'))
 
   # creates seurat tutorial markdown to html file
   observeEvent(input$create_output, {
@@ -202,12 +207,29 @@ server <- function(input, output, session) {
 
   })
 
+  created_output_path <- reactive({
+
+    home <- normalizePath("/") # normalizes home path
+    path <- file.path(home, paste(unlist(input$data_source$path[-1]), collapse = .Platform$file.sep))
+
+    path
+
+  })
+
+  observe({
+
+    updateSelectInput(session,
+                      inputId = "rds_file",
+                      label = "Select RDS file",
+                      choices = gsub(".rds", "", dir(created_output_path(), pattern = ".rds")))
+  })
+
   ## reads in already created seurat object
   seurat_obj <- eventReactive(input$read_data, {
 
     withProgress(message = "Loading Data...", {
 
-      readRDS(file = dir("data", pattern = input$data_source, full.names = TRUE))
+      readRDS(file = dir(created_output_path(), pattern = paste0(input$rds_file, ".rds"), full.names = TRUE))
 
     })
 
