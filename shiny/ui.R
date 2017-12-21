@@ -1,16 +1,28 @@
+#' ShinyUI
+#'
+#' Runs and visulizes the 10X clustering from the Cell Ranger website
+#'
+#' Runs and visulizes the 10X clustering from the Cell Ranger website
+#'
+#' @param id shiny id
+#' @return shinyUI for module
+#' @export
+#' @import shiny shinyFiles cellranger
+#' @author Kirk Gosik <kgosik@broadinstitute.org>
+#' @examples
 
-# This is the user-interface definition of a Shiny web application.
-# You can find out more about building applications with Shiny here:
-#
-# http://shiny.rstudio.com
-#
 
-library(shiny)
-library(shinyFiles)
-source("../R/ModularUMItSNEPlot.R")
-source("../R/ModularClusterExplore10x.R")
-source("../R/ModularIdentifytSNE.R")
-#source("src/ModularMorpheusPlot.R")
+# if cellranger R kit is not installed then install it
+if( !{"cellrangerRkit" %in% installed.packages()} ) {
+  source("http://cf.10xgenomics.com/supp/cell-exp/rkit-install-2.0.0.R")
+}
+require(cellrangerRkit)
+
+
+# source("../R/ModularUMItSNEPlot.R") ## will move to main part of the package
+# source("../R/ModularClusterExplore10x.R") ## will move to main part of the package
+# source("../R/ModularIdentifytSNE.R") ## will move to main part of the package
+# #source("src/ModularMorpheusPlot.R")
 
 shinyUI(
   fluidPage(
@@ -70,7 +82,7 @@ shinyUI(
 
         condition = "input.task == 'Select Data'",
 
-        selectInput("data_source", "Select Data Source", choices = gsub(".rds","",dir("data", pattern = ".rds"))),
+        selectInput("data_source", "Select Data Source", choices = gsub(".rds","",dir("../data", pattern = ".rds"))),
         actionButton("read_data", "Read Data"),
         uiOutput("ui_data_load")
 
@@ -86,7 +98,7 @@ shinyUI(
       tabsetPanel(
 
         tabPanel(title = "Introduction",
-                 includeMarkdown("../R/AppIntroduction.md")
+                 includeMarkdown("www/AppIntroduction.md")
         ), # tabPanel
 
         # Show the t-SNE plot

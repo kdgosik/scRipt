@@ -1,9 +1,23 @@
 Package: scRipt
-Title: What the Package Does (one line, title case)
+Title: Single Cell R Interactive Playground Tool
 Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Authors@R: person("Kirk", "Gosik", email = "kgosik@broadinstitute.org", role = c("aut", "cre"))
+Description: This tool is used for interacting with single cell data via the latest R packages 
+    used for such analysis.  As new tools, functions and packages become available this will be updated
+    to include them.  It is meant as a beginning platform for access to these tools.  There will be both
+    static Rmarkdown to html reports able to be generated as well as interactive shiny modules that can be 
+    used to explore data in more depth. 
 Depends: R (>= 3.4.1)
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
+Imports:
+    shiny,
+    shinyFiles,
+    cellranger,
+    knitr,
+    tidyverse,
+    ggplot2,
+    plotly,
+    Seurat,
+   

@@ -447,7 +447,7 @@ obj <- SetAllIdent(object = obj, id = "ClusterNames_0.6")
 
 ```{r SaveObject}
 obj@misc <- params$path
-out_file <- paste0("data/", paste0(params$project, collapse = "_"), ".rds")
+out_file <- paste0("../data/", paste0(params$project, collapse = "_"), ".rds")
 saveRDS(obj, file = out_file)
 ```
 

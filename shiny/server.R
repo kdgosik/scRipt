@@ -1,23 +1,30 @@
+#' ShinyServer
+#'
+#' Runs and visulizes the 10X clustering from the Cell Ranger website
+#'
+#' Runs and visulizes the 10X clustering from the Cell Ranger website
+#'
+#' @param id shiny id
+#' @return shinyUI for module
+#' @export
+#' @import shiny shinyFiles cellranger
+#' @author Kirk Gosik <kgosik@broadinstitute.org>
+#' @examples
 
-# This is the server logic for a Shiny web application.
-# You can find out more about building applications with Shiny here:
-#
-# http://shiny.rstudio.com
-#
 
-  # Load packages
-library(shiny)
-library(shinyFiles)
-library(shinycssloaders)
-library(cellranger)
-library(cellrangerRkit)
-source("../R/ModularUMItSNEPlot.R")
-source("../R/ModularClusterExplore10x.R")
-source("../R/ModularIdentifytSNE.R")
+# if cellranger R kit is not installed then install it
+if( !{"cellrangerRkit" %in% installed.packages()} ) {
+  source("http://cf.10xgenomics.com/supp/cell-exp/rkit-install-2.0.0.R")
+}
+require(cellrangerRkit)
+
+# source("../R/ModularUMItSNEPlot.R")  ## will move to main part of the package
+# source("../R/ModularClusterExplore10x.R") ## will move to main part of the package
+# source("../R/ModularIdentifytSNE.R")  ## will move to main part of the package
 
 
 shinyServer(function(input, output, session) {
-
+    ## supposed to dynamically update data sources but doesn't seem to
   reactive({
 
     updateSelectInput(session, "data_source", "Select Data Source",
@@ -28,6 +35,7 @@ shinyServer(function(input, output, session) {
   # defines root directory for the user
   shinyDirChoose(input, 'file_path', roots = c(root = '/'))
 
+    # creates seurat tutorial markdown to html file
   observeEvent(input$create_output, {
 
     withProgress(message = "Creating Output File...", {
@@ -44,24 +52,24 @@ shinyServer(function(input, output, session) {
                                celltype_inpt,
                                format(Sys.Date())), collapse = "-")
 
-      rmarkdown::render(input = "Seurat_to_Markdown.Rmd",
+      rmarkdown::render(input = "../R/Seurat_to_Markdown.Rmd",
                         params = list(project = project_name,
                                       path = path,
                                       cells = input$cells,
                                       genes = input$genes,
                                       max_mt = input$max_mt),
-                        output_file = paste0("output/", project_name, ".html"))
+                        output_file = paste0("../output/", project_name, ".html"))
 
     })
 
   })
 
-
+    ## reads in already created seurat object
   seurat_obj <- eventReactive(input$read_data, {
 
     withProgress(message = "Loading Data...", {
 
-      readRDS(file = dir("data", pattern = input$data_source, full.names = TRUE))
+      readRDS(file = dir("../data", pattern = input$data_source, full.names = TRUE))
 
     })
 
@@ -69,6 +77,7 @@ shinyServer(function(input, output, session) {
 
 
   outs <- eventReactive(input$read_data, {
+
     # load(file = dir("data", pattern = input$data_source, full.names = TRUE))
     # path stored in obj@misc from running Seurat_to_Markdown
     selected_path <- seurat_obj()@misc

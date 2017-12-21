@@ -1,23 +1,31 @@
-
 #' ClusterExplore10xUI
 #'
-#' Runs and visulizes the 10X clustering from the Cell Ranger website
+#' Runs and visulizes the 10X clustering from the Cell Ranger website.  This function is to render
+#' the UI for the shiny module.
 #'
-#' Runs and visulizes the 10X clustering from the Cell Ranger website
+#' The module allows for the input of different parameters such as the number of clusters and limits
+#' for the number of genes or the expression limits in the heatmap.
 #'
-#' @param id shiny id
-#' @return shinyUI for module
+#' @seealso shiny
 #' @export
-#' @import shiny ggplot2 plotly cellranger cellrangerRkit shingcssloaders
+#' @param id The namespace for the module
+#' @keywords shiny
+#' @import cellranger
+#' @improt cellrangerRkit
+#' @import shinycssloaders
+#' @importFrom shiny div
+#' @importFrom shiny NS
+#' @importFrom shiny sliderInput
+#' @importFrom shiny plotOutput
+#' @improtFrom shiny numeriInput
 #' @author Kirk Gosik <kgosik@broadinstitute.org>
-#' @examples
 
+# if cellranger R kit is not installed then install it
+if( !{"cellrangerRkit" %in% installed.packages()} ) {
+  source("http://cf.10xgenomics.com/supp/cell-exp/rkit-install-2.0.0.R")
+}
+require(cellrangerRkit)
 
-library(ggplot2)
-library(plotly)
-library(cellranger)
-library(cellrangerRkit)
-library(shinycssloaders)
 
 # MODULE UI
 ClusterExplore10xUI <- function(id) {
@@ -27,6 +35,7 @@ ClusterExplore10xUI <- function(id) {
   tagList(
 
     div(
+      ## numeric input for the number of clusters to include
       shiny::sliderInput(inputId = ns("num_clusters"),
                        label = "Number of Clusters",
                        min = 2, max = 10,
@@ -34,10 +43,12 @@ ClusterExplore10xUI <- function(id) {
       ), # div
 
     div(
-      withSpinner(shiny::plotOutput(ns("cluster_plot")))
+      ## css spinner on top of ploting the scatter plot of the clusters
+      withSpinner(shiny::plotOutput(outputId = ns("cluster_plot")))
       ), # div
 
     div(
+      ## numeric input for the number of genes to include
       shiny::numericInput(inputId = ns("n_genes"),
                          label = "Number of Genes",
                          value = 3,
@@ -46,6 +57,7 @@ ClusterExplore10xUI <- function(id) {
       ), # div
 
     div(
+      ## slider choice of heatmap limits for gene expression
       shiny::sliderInput(inputId = ns("hm_limits"),
                          label = "Heatmap Limits",
                          min = -5, max = 5,
@@ -53,7 +65,8 @@ ClusterExplore10xUI <- function(id) {
       ), # div
 
     div(
-      shiny::plotOutput(ns("pheatmap"))
+      ## plotting the heatmap
+      shiny::plotOutput(outputId = ns("pheatmap"))
       ) # div
 
     ) # tagList
@@ -63,32 +76,36 @@ ClusterExplore10xUI <- function(id) {
 
 
 #' ClusterExplore10xServer
-#' MODULE Server
 #'
-#' Runs and visulizes the 10X clustering from the Cell Ranger website
+#' Runs and visulizes the 10X clustering from the Cell Ranger website.  This function is to render
+#' the Server for the shiny module.
 #'
-#' Runs and visulizes the 10X clustering from the Cell Ranger website
+#' The module allows for the input of different parameters such as the number of clusters and limits
+#' for the number of genes or the expression limits in the heatmap.
 #'
-#' @param id shiny id
-#' @param output
-#' @param session
-#' @param outs output object from loading in a cellranger load_cellranger_analysis_results()
-#' @return shinyUI for module
+#' @seealso shiny
 #' @export
-#' @import shiny ggplot2 plotly cellranger cellrangerRkit shingcssloaders
+#' @param input List-like object that stores the current values of all of the widgets in your app.
+#' @param output List-like object that stores instructions for building the R objects in your app.
+#' @param session List-like object about the session to be passed to the UI.
+#' @param outs a reactive object from the cellranger toolkit
+#' @keywords shiny
+#' @importFrom shiny reactive
+#' @importFrom shiny validate
+#' @importFrom shiny observe
 #' @author Kirk Gosik <kgosik@broadinstitute.org>
-#' @examples
 
 
 ClusterExplore10xServer <- function(input, output, session, outs) {
 
-
+    ## creates reactive element for the clusters that were made from the cell ranger pipeline
   cluster_result <- reactive({
 
     outs()[["clustering"]][[paste("kmeans", input$num_clusters, "clusters", sep = "_")]]
 
   })
 
+    ## dynamically chooses cluster colors based off of the total number of clusters.
   example_col <- reactive({
     rev(brewer.pal(input$num_clusters, ifelse(input$num_clusters < 9, "Set2", "Set3"))) # customize plotting colors
   })
@@ -105,9 +122,11 @@ ClusterExplore10xServer <- function(input, output, session, outs) {
 
     # sort the cells by the cluster labels
     cells_to_plot <- order_cell_by_clusters(outs()[["gbm"]], cluster_result()$Cluster)
+
     # order the genes from most up-regulated to most down-regulated in each cluster
     prioritized_genes <- prioritize_top_genes(outs()[["gbm"]], cluster_result()$Cluster, "sseq", min_mean=0.5)
 
+      ## heatmap of gene - barcode matrix
     gbm_pheatmap(log_gene_bc_matrix(outs()[["gbm"]]),
                  genes_to_plot = prioritized_genes,
                  cells_to_plot = cells_to_plot,
