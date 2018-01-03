@@ -35,43 +35,53 @@ ClusterExplore10xUI <- function(id) {
   tagList(
 
     div(
+
       ## numeric input for the number of clusters to include
       shiny::sliderInput(inputId = ns("num_clusters"),
                          label = "Number of Clusters",
                          min = 2, max = 10,
                          value = 5, step = 1)
+
       ), # div
 
     div(
+
       ## css spinner on top of ploting the scatter plot of the clusters
       shinycssloaders::withSpinner(shiny::plotOutput(outputId = ns("cluster_plot")))
+
       ), # div
 
     div(
+
       ## numeric input for the number of genes to include
       shiny::numericInput(inputId = ns("n_genes"),
                           label = "Number of Genes",
                           value = 3,
                           min = 1, max = 20,
                           step = 1)
+
       ), # div
 
     div(
+
       ## slider choice of heatmap limits for gene expression
       shiny::sliderInput(inputId = ns("hm_limits"),
                          label = "Heatmap Limits",
                          min = -5, max = 5,
                          value = c(-1, 2), step = 0.5)
+
       ), # div
 
     div(
+
       ## plotting the heatmap
       shiny::plotOutput(outputId = ns("pheatmap"))
+
       ) # div
 
     ) # tagList
 
-}
+} # ClusterExplore10xUI
 
 
 
@@ -145,4 +155,5 @@ ClusterExplore10xServer <- function(input, output, session, outs) {
 
 
   # create values and axis annotations for pheatmap
-}
+
+} # ClusterExplore10xServer

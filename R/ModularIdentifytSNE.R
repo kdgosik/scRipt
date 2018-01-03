@@ -34,6 +34,7 @@ IdentifytSNEUI <- function(id) {
 
       ## css spinner loader on top of plotly output
       shinycssloaders::withSpinner(plotly::plotlyOutput(outputId = ns("plot1")))
+
         ), # div
 
     div(
@@ -45,7 +46,7 @@ IdentifytSNEUI <- function(id) {
 
     ) # tagList
 
-}
+} # IdentifytSNEUI
 
 
 #' IdentifytSNEServer
@@ -72,7 +73,7 @@ IdentifytSNEServer <- function(input, output, session, obj) {
   # outputs plotly version of tSNE or PCA plot
   output$plot1 <- plotly::renderPlotly({
 
-   DimPlot(object = obj(), reduction.use = input$reduct)$plot
+   Seurat::DimPlot(object = obj(), reduction.use = input$reduct)$plot
 
   })
 
@@ -86,17 +87,20 @@ IdentifytSNEServer <- function(input, output, session, obj) {
       "Click and drag events (i.e., select/lasso) appear here (double-click to clear)"
 
       }else {
+## somehow substring x and y down to 6 decimals places as a character
+        join_data <- data.frame( obj()@dr$tsne@cell.embeddings, stringsAsFactors = FALSE ) %>%
+          mutate(cell = rownames(.), x = as.character(round(tSNE_1, 6)), y = as.character(round(tSNE_2, 6)))
 
-        d %>%
-          dplyr::rename(tSNE_1 = x, tSNE_2 = y) %>%
-          dplyr::left_join({
-            obj()@dr$tsne@cell.embeddings %>%
-              data.frame(., cell = rownames(.), stringsAsFactors = FALSE)
-            }) %>%
-          .$cell
+        out <- d %>%
+          mutate(x = as.character(x), y = as.character(y)) %>%
+          dplyr::left_join( join_data )
+
+        list(d, join_data[1:5,], out, join_data[join_data$x %in% d$x & join_data$y %in% d$y,])
+
+
 
       }
 
   })
 
-}
+} # IdentifytSNEServer

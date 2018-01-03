@@ -31,30 +31,38 @@ UMItSNEPlotUI <- function(id) {
   shiny::tagList(
 
     div(
+
       shiny::sliderInput(inputId = ns("plot_limits"),
                          label = "Value Limits",
                          min = 0, max = 10,
                          value = c(0, 4), step = 0.5)
+
       ), # div
 
     div(
+
       shiny::selectizeInput(inputId = ns("gene_symbol"),
                      label = "Select Gene Symbols",
                      choices = "",
                      multiple = TRUE)
+
     ),
 
     div(
+
         plotly::plotlyOutput(outputId = ns("plot1"))
+
         ), # div
 
     div(
+
         shiny::verbatimTextOutput(outputId = ns("transform"))
+
         ) # div
 
     ) # tagList
 
-}
+} # UMItSNEPlotUI
 
 
 #' UMItSNEPlotServer
@@ -123,4 +131,4 @@ UMItSNEPlotServer <- function(input, output, session, outs) {
   })
 
 
-}
+} # UMItSNEPlotServer

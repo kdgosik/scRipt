@@ -20,6 +20,15 @@ if( !{"cellrangerRkit" %in% installed.packages()} ) {
 }
 require(cellrangerRkit)
 
+## comment out the source statements
+## comment out the shinyApp() statement at bottom
+## change line 110 to take away the ../
+
+# source("ModularUMItSNEPlot.R")  ## will move to main part of the package
+# source("ModularClusterExplore10x.R") ## will move to main part of the package
+# source("ModularIdentifytSNE.R")  ## will move to main part of the package
+
+
 ui <- shinyUI(
   fluidPage(
 
@@ -163,12 +172,6 @@ if( !{"cellrangerRkit" %in% installed.packages()} ) {
 }
 require(cellrangerRkit)
 
-# source("../R/ModularUMItSNEPlot.R")  ## will move to main part of the package
-# source("../R/ModularClusterExplore10x.R") ## will move to main part of the package
-# source("../R/ModularIdentifytSNE.R")  ## will move to main part of the package
-
-options(shiny.maxRequestSize = 500*1024^2)
-
 
 server <- function(input, output, session) {
 
@@ -211,7 +214,6 @@ server <- function(input, output, session) {
 
     home <- normalizePath("/") # normalizes home path
     path <- file.path(home, paste(unlist(input$data_source$path[-1]), collapse = .Platform$file.sep))
-
     path
 
   })
@@ -247,15 +249,15 @@ server <- function(input, output, session) {
     selected_path <- file.path(paste(unlist(strsplit(selected_path, "/"))[1:outs_pos], collapse = .Platform$file.sep))
 
     # loads gene - barcode matrix
-    gbm <- load_cellranger_matrix( selected_path )
+    gbm <- cellrangerRkit::load_cellranger_matrix( selected_path )
 
     # normalize nonzero genes
-    use_genes <- get_nonzero_genes(gbm)
-    gbm_bcnorm <- normalize_barcode_sums_to_median(gbm[use_genes, ])
-    gbm_log <- log_gene_bc_matrix(gbm_bcnorm, base = 10)
+    use_genes <- cellrangerRkit::get_nonzero_genes(gbm)
+    gbm_bcnorm <- cellrangerRkit::normalize_barcode_sums_to_median(gbm[use_genes, ])
+    gbm_log <- cellrangerRkit::log_gene_bc_matrix(gbm_bcnorm, base = 10)
 
     # loads analysis results
-    analysis_results <- load_cellranger_analysis_results( selected_path )
+    analysis_results <- cellrangerRkit::load_cellranger_analysis_results( selected_path )
 
     # returns list of the outputs needed for plots
     return(list(gbm = gbm,
@@ -296,3 +298,6 @@ server <- function(input, output, session) {
 
 
 }
+
+
+shinyApp(ui = ui, server = server)
