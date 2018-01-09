@@ -204,7 +204,7 @@ server <- function(input, output, session) {
                                       cells = input$cells,
                                       genes = input$genes,
                                       max_mt = input$max_mt),
-                        output_file = paste0("output/", project_name, ".html"))
+                        output_file = paste0(getwd(), "/output/", project_name, ".html"))
 
     })
 

@@ -7,8 +7,8 @@ Description: This tool is used for interacting with single cell data via the lat
     to include them.  It is meant as a beginning platform for access to these tools.  There will be both
     static Rmarkdown to html reports able to be generated as well as interactive shiny modules that can be 
     used to explore data in more depth. 
-Depends: R (>= 3.3)
-License: What license is it under?
+Depends: R (>= 3.0)
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Imports:

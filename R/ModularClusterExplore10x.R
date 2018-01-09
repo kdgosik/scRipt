@@ -122,27 +122,31 @@ ClusterExplore10xServer <- function(input, output, session, outs) {
 
   output$cluster_plot <- renderPlot({
 
-    visualize_clusters(cluster_result = cluster_result()$Cluster,
-                       projection = outs()[["tsne_proj"]][c("TSNE.1","TSNE.2")],
-                       colour = example_col())
+    cellrangerRkit::visualize_clusters(cluster_result = cluster_result()$Cluster,
+                                       projection = outs()[["tsne_proj"]][c("TSNE.1","TSNE.2")],
+                                       colour = example_col())
 
   })
 
   output$pheatmap <- renderPlot({
 
     # sort the cells by the cluster labels
-    cells_to_plot <- order_cell_by_clusters(outs()[["gbm"]], cluster_result()$Cluster)
+    cells_to_plot <- cellrangerRkit::order_cell_by_clusters(gbm = outs()[["gbm"]],
+                                                            clu = cluster_result()$Cluster)
 
     # order the genes from most up-regulated to most down-regulated in each cluster
-    prioritized_genes <- prioritize_top_genes(outs()[["gbm"]], cluster_result()$Cluster, "sseq", min_mean=0.5)
+    prioritized_genes <- cellrangerRkit::prioritize_top_genes(gbm = outs()[["gbm"]],
+                                                              clu = cluster_result()$Cluster,
+                                                              method = "sseq",
+                                                              min_mean = 0.5)
 
       ## heatmap of gene - barcode matrix
-    gbm_pheatmap(log_gene_bc_matrix(outs()[["gbm"]]),
-                 genes_to_plot = prioritized_genes,
-                 cells_to_plot = cells_to_plot,
-                 n_genes = input$n_genes,
-                 colour = example_col(),
-                 limits = input$hm_limits)
+    cellrangerRkit::gbm_pheatmap(gbm = cellrangerRkit::log_gene_bc_matrix(outs()[["gbm"]]),
+                                 genes_to_plot = prioritized_genes,
+                                 cells_to_plot = cells_to_plot,
+                                 n_genes = input$n_genes,
+                                 colour = example_col(),
+                                 limits = input$hm_limits)
 
   })
 
